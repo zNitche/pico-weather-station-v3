@@ -1,0 +1,1 @@
+from pico_weather_station.modules.voltmeter import Voltmeter
