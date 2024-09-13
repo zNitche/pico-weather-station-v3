@@ -1,3 +1,12 @@
+from pico_weather_station.modules import Voltmeter
+from pico_weather_station import machine_interfaces
+from bme280 import BME280
+
+
+voltmeter = Voltmeter()
+bme_280 = BME280(machine_interfaces.i2c_0)
+
+
 def create_routers(app):
     from pico_weather_station.routes import core
 
