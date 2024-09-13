@@ -1,0 +1,4 @@
+cp -r pico_weather_station /pyboard
+cp -r *.py /pyboard
+cp -r *.json /pyboard
+repl
