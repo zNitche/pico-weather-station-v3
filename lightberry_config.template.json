@@ -1,0 +1,11 @@
+{
+  "Server": {
+    "SERVER_PORT": 80,
+    "WIFI_SSID": "",
+    "WIFI_PASSWORD": "",
+    "BLINK_LED": true
+  },
+  "App": {
+    "DEBUG": false
+  }
+}
