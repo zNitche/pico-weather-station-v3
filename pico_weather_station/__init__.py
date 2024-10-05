@@ -1,9 +1,11 @@
 from pico_weather_station.modules import Voltmeter
 from pico_weather_station import machine_interfaces
 from bme280 import BME280
+from ds3231 import DS3231
 
 
 voltmeter = Voltmeter()
+rtc = DS3231(machine_interfaces.i2c_0)
 bme_280 = BME280(machine_interfaces.i2c_0)
 
 
