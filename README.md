@@ -1,9 +1,11 @@
 # PicoWeatherStation v3
 
-### Requirements (Microcontroller)
+### Microcontroller requirements (frozen modules)
 
-- [lightberryAPI v1.3.0](https://github.com/zNitche/lightberryAPI/releases/tag/v1.3.0) - frozen module
-- [bme280.py](https://github.com/zNitche/pico-bme280/blob/master/bme280.py) - frozen module
+- [lightberryAPI v1.3.0](https://github.com/zNitche/lightberryAPI/releases/tag/v1.3.0)
+- [bme280.py](https://github.com/zNitche/pico-bme280/blob/master/bme280.py)
+- [ds3231.py](https://github.com/zNitche/pico-rtc-ds3231/blob/master/ds3231.py)
+- [sdcard.py](https://github.com/micropython/micropython-lib/blob/v1.22.2/micropython/drivers/storage/sdcard/sdcard.py)
 
 ### Extra
 
