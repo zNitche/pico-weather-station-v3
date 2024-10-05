@@ -22,24 +22,26 @@ class PeripheralsManager:
         except Exception as e:
             print(f"error while initializing {attr}: {str(e)}")
 
+    def __get_readings(self, handler, fallback_value=None):
+        try:
+            return handler()
+
+        except:
+            return fallback_value
+
     def get_battery_voltage(self) -> float:
-        if not self.__battery_voltmeter:
-            return 0
+        return self.__get_readings(lambda: self.__battery_voltmeter.measure(), fallback_value=0)
 
-        return self.__battery_voltmeter.measure()
+    def get_env_readings(self) -> tuple[float, float, float]:
+        return self.__get_readings(lambda: self.__bme_280.get_readings(), fallback_value=(0, 0, 0))
 
-    def get_env_readings(self):
-        if not self.__bme_280:
-            return 0, 0, 0
+    def get_datetime(self) -> DateTime | None:
+        return self.__get_readings(lambda: self.__rtc.get_datetime())
 
-        return self.__bme_280.get_readings()
-
-    def get_datetime(self):
-        if not self.__rtc:
-            return None
-
-        return self.__rtc.get_datetime()
-
-    def set_datetime(self, datetime: DateTime):
-        if self.__rtc:
+    def set_datetime(self, datetime: DateTime) -> bool:
+        try:
             self.__rtc.set_datetime(datetime)
+            return True
+
+        except:
+            return False
