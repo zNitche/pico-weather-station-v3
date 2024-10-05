@@ -1,1 +1,2 @@
 from pico_weather_station.modules.voltmeter import Voltmeter
+from pico_weather_station.modules.internal_temp_sensor import InternalTempSensor
