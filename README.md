@@ -37,3 +37,12 @@ clear all files
 ```
 rshell -f commands/wipe
 ```
+
+
+### Notes (WIP)
+
+```
++ (5v)
+
+- | + (3.3v) | sda | scl
+```
