@@ -1,6 +1,7 @@
 from pico_weather_station.peripherals_manager import PeripheralsManager
 from pico_weather_station.modules import Voltmeter, InternalTempSensor
 
+
 peripherals_manager = PeripheralsManager()
 battery_voltmeter = Voltmeter()
 internal_temp_sensor = InternalTempSensor()

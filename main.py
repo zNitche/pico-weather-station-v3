@@ -1,9 +1,8 @@
-from sdcard import SDCard
 import uos
+from sdcard import SDCard
 from lightberry import Server, App, AppContext
 from lightberry.utils import common_utils, files_utils
-from pico_weather_station import setup_app, machine_interfaces
-import consts
+from pico_weather_station import setup_app, machine_interfaces, consts
 
 
 def mount_sd_card():
