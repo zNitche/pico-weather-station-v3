@@ -1,6 +1,8 @@
-from pico_weather_station import machine_interfaces
+from lightberry.utils import common_utils
 from bme280 import BME280
 from ds3231 import DS3231, DateTime
+from pico_weather_station import machine_interfaces
+from typing import Callable
 
 
 class PeripheralsManager:
@@ -9,21 +11,22 @@ class PeripheralsManager:
         self.__bme_280: BME280 | None = None
 
     def setup_modules(self):
-        self.__init_device("__rtc", lambda: DS3231(machine_interfaces.i2c_0))
-        self.__init_device("__bme_280", lambda: BME280(machine_interfaces.i2c_0))
+        self.__init_device(self.__rtc, lambda: DS3231(machine_interfaces.i2c_0))
+        self.__init_device(self.__bme_280, lambda: BME280(machine_interfaces.i2c_0))
 
-    def __init_device(self, attr, initializer):
+    def __init_device(self, module: object, init_handler: Callable):
         try:
-            setattr(self, attr, initializer())
+            module = init_handler()
 
         except Exception as e:
-            print(f"error while initializing {attr}: {str(e)}")
+            common_utils.print_debug(f"error while initializing {module}: {str(e)}")
 
-    def __get_readings(self, handler, fallback_value=None):
+    def __get_readings(self, handler: Callable, fallback_value=None):
         try:
             return handler()
 
-        except:
+        except Exception as e:
+            common_utils.print_debug(f"error while getting sensor readings: {str(e)}")
             return fallback_value
 
     def get_env_readings(self) -> tuple[float, float, float]:
