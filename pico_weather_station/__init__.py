@@ -1,10 +1,8 @@
 from pico_weather_station.sensors_manager import SensorsManager
-from pico_weather_station.modules import Voltmeter, InternalTempSensor
+from pico_weather_station.modules import InternalTempSensor
 
 
 sensors_manager = SensorsManager()
-battery_voltmeter = Voltmeter()
-internal_temp_sensor = InternalTempSensor()
 
 
 def create_routers(app):

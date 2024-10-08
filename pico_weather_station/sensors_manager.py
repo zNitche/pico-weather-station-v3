@@ -1,14 +1,18 @@
+from typing import Callable
 from lightberry.utils import common_utils
 from bme280 import BME280
 from ds3231 import DS3231, DateTime
 from pico_weather_station import machine_interfaces
-from typing import Callable
+from pico_weather_station.modules import Voltmeter, InternalTempSensor
 
 
 class SensorsManager:
     def __init__(self):
         self.__rtc: DS3231 | None = None
         self.__bme_280: BME280 | None = None
+
+        self.__battery_voltmeter = Voltmeter()
+        self.__internal_temp_sensor = InternalTempSensor()
 
     def setup_modules(self):
         self.__init_device(self.__rtc, lambda: DS3231(machine_interfaces.i2c_0))
@@ -42,3 +46,9 @@ class SensorsManager:
 
         except:
             return False
+
+    def get_battery_voltage(self):
+        return self.__battery_voltmeter.measure_with_sampling()
+
+    def get_internal_temp(self):
+        return self.__internal_temp_sensor.get_temp()
