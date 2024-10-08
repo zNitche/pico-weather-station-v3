@@ -5,7 +5,7 @@ from pico_weather_station import machine_interfaces
 from typing import Callable
 
 
-class PeripheralsManager:
+class SensorsManager:
     def __init__(self):
         self.__rtc: DS3231 | None = None
         self.__bme_280: BME280 | None = None
