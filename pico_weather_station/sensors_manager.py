@@ -1,9 +1,12 @@
-from typing import Callable
+from lightberry import typing
 from lightberry.utils import common_utils
 from bme280 import BME280
 from ds3231 import DS3231, DateTime
 from pico_weather_station import machine_interfaces
 from pico_weather_station.modules import Voltmeter, InternalTempSensor
+
+if typing.TYPE_CHECKING:
+    from typing import Callable
 
 
 class SensorsManager:
