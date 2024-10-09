@@ -12,7 +12,14 @@ def create_routers(app):
     app.add_router(core)
 
 
+def setup_tasks(app):
+    from pico_weather_station import tasks
+
+    app.add_background_task(tasks.LogWeather(config=app.config))
+
+
 def setup_app(app):
     sensors_manager.setup_modules()
 
+    setup_tasks(app)
     create_routers(app)

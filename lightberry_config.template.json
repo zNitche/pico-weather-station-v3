@@ -6,6 +6,7 @@
     "BLINK_LED": true
   },
   "App": {
-    "DEBUG": false
+    "DEBUG": false,
+    "WEATHER_LOGS_PER_HOUR": 4
   }
 }

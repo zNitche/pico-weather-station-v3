@@ -1,0 +1,1 @@
+from pico_weather_station.tasks.log_weather import LogWeather
