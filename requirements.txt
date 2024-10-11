@@ -1,1 +1,1 @@
-lightberry @ git+https://github.com/zNitche/lightberryAPI.git@v1.3.0
+lightberry @ git+https://github.com/zNitche/lightberryAPI.git@v1.3.1
