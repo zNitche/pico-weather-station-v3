@@ -10,7 +10,9 @@ if typing.TYPE_CHECKING:
 
 
 class SensorsManager:
-    def __init__(self):
+    def __init__(self, logging: bool = False):
+        self.logging = logging
+
         self.__rtc: DS3231 | None = None
         self.__bme_280: BME280 | None = None
 
@@ -18,22 +20,24 @@ class SensorsManager:
         self.__internal_temp_sensor = InternalTempSensor()
 
     def setup_modules(self):
-        self.__init_device(self.__rtc, lambda: DS3231(machine_interfaces.i2c_0))
-        self.__init_device(self.__bme_280, lambda: BME280(machine_interfaces.i2c_0))
+        self.__init_device("__rtc", lambda: DS3231(machine_interfaces.i2c_0))
+        self.__init_device("__bme_280", lambda: BME280(machine_interfaces.i2c_0))
 
-    def __init_device(self, module: object, init_handler: Callable):
+    def __init_device(self, module: str, init_handler: Callable):
         try:
-            module = init_handler()
+            setattr(self, module, init_handler())
 
         except Exception as e:
-            common_utils.print_debug(f"error while initializing {module}: {str(e)}")
+            common_utils.print_debug(f"error while initializing {module}: {str(e)}",
+                                     debug_enabled=self.logging)
 
     def __get_readings(self, handler: Callable, fallback_value=None):
         try:
             return handler()
 
         except Exception as e:
-            common_utils.print_debug(f"error while getting sensor readings: {str(e)}")
+            common_utils.print_debug(f"error while getting sensor readings: {str(e)}",
+                                     debug_enabled=self.logging)
             return fallback_value
 
     def get_env_readings(self) -> tuple[float, float, float]:
