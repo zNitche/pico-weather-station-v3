@@ -12,17 +12,22 @@ class WeatherSensorsLogger:
 
         self.last_logged: DateTime | None = None
 
+        self.__setup()
+
+    def __setup(self):
+        logs_path = self.get_logs_path()
+
+        if files_utils.check_if_exists(logs_path):
+            logs_content = csv_utils.get_csv_content(logs_path)
+
+            if len(logs_content) > 0:
+                self.last_logged = DateTime.from_iso(logs_content[0]["DATETIME"])
+
     def log(self):
         datetime = sensors_manager.get_datetime()
         logs_path = self.get_logs_path()
 
         if logs_path:
-            if files_utils.check_if_exists(logs_path):
-                logs_content = csv_utils.get_csv_content(logs_path)
-
-                if len(logs_content) > 0:
-                    self.last_logged = DateTime.from_iso(logs_content[0]["DATETIME"])
-
             if self.last_logged is None:
                 self.__log_sensors_data()
 
