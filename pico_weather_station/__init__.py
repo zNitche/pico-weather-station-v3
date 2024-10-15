@@ -1,10 +1,11 @@
 from lightberry import typing
 from pico_weather_station.sensors_manager import SensorsManager
-from pico_weather_station.modules import InternalTempSensor
+from pico_weather_station.modules import InternalTempSensor, CacheDB
 
 if typing.TYPE_CHECKING:
     from lightberry import App
 
+cache_db = CacheDB()
 sensors_manager = SensorsManager(logging=True)
 
 
