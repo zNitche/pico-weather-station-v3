@@ -1,5 +1,5 @@
 from pico_weather_station.utils import csv_utils, files_utils
-from pico_weather_station import sensors_manager
+from pico_weather_station import sensors_manager, cache_db
 from ds3231 import DateTime
 
 
@@ -22,6 +22,8 @@ class WeatherSensorsLogger:
 
             if len(logs_content) > 0:
                 self.last_logged = DateTime.from_iso(logs_content[0]["DATETIME"])
+
+        cache_db.update("weather_logger", "last_logged", self.last_logged)
 
     def log(self):
         datetime = sensors_manager.get_datetime()

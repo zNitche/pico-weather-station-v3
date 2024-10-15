@@ -6,21 +6,32 @@ class CacheDB:
         return self.__db
 
     def read(self, key: str):
-        return self.__db.get(str(key))
+        return self.__db.get(key)
 
     def write(self, key: str, value):
-        self.__db[str(key)] = value
+        self.__db[key] = value
 
     def delete(self, key: str):
-        if self.__db.get(str(key)) is not None:
-            del self.__db[str(key)]
+        if self.__db.get(key) is not None:
+            del self.__db[key]
 
     def get_key_by_prefix(self, prefix: str) -> str:
         search_key = None
 
         for key in self.__db.keys():
-            if str(key).startswith(prefix):
+            if key.startswith(prefix):
                 search_key = key
                 break
 
         return search_key
+
+    def update(self, key: str, value_key: str, value):
+        """can be applied only to dict type db entries"""
+        current_data = self.__db.get(key)
+
+        if current_data is None:
+            new_data = {value_key: value}
+        else:
+            new_data = current_data[value_key] = value
+
+        self.write(key, new_data)
