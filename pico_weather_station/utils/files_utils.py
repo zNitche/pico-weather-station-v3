@@ -2,16 +2,14 @@ import os
 
 
 def check_if_exists(path: str):
-    found = False
-
     try:
         os.stat(path)
-        found = True
+        return True
 
     except OSError:
         pass
 
-    return found
+    return False
 
 
 def create_dir_if_doesnt_exit(dir_path: str):
