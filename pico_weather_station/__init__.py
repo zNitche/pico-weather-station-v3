@@ -16,7 +16,7 @@ def create_routers(app: App):
 
     app.add_router(core)
     app.add_router(api.sensors)
-    app.add_router(api.weather_data)
+    app.add_router(api.weather)
 
 
 def setup_tasks(app: App):

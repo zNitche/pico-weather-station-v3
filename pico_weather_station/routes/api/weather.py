@@ -8,10 +8,10 @@ if typing.TYPE_CHECKING:
     from lightberry import Request
 
 
-weather_data = Router("weather_data", url_prefix="/api/weather")
+weather = Router("weather_data", url_prefix="/api/weather")
 
 
-@weather_data.route("/years")
+@weather.route("/years")
 async def logged_years(request: Request):
     logs = os.listdir(consts.WEATHER_LOGS_DIR_PATH)\
         if files_utils.check_if_exists(consts.WEATHER_LOGS_DIR_PATH) else []
@@ -19,7 +19,7 @@ async def logged_years(request: Request):
     return Response(payload=jsonify({"years": logs}))
 
 
-@weather_data.route("/date/:year")
+@weather.route("/date/:year")
 async def logged_months(request: Request, year: str):
     path = f"{consts.WEATHER_LOGS_DIR_PATH}/{year}"
     months_logs = os.listdir(path) if files_utils.check_if_exists(path) else []
@@ -41,7 +41,7 @@ async def logged_months(request: Request, year: str):
     return Response(payload=jsonify({"months": logs_data}))
 
 
-@weather_data.route("/date/:year/:month")
+@weather.route("/date/:year/:month")
 async def logged_days(request: Request, year: str, month: str):
     path = f"{consts.WEATHER_LOGS_DIR_PATH}/{year}/{month}"
 
@@ -53,7 +53,7 @@ async def logged_days(request: Request, year: str, month: str):
     return Response(payload=jsonify({"days": logs}))
 
 
-@weather_data.route("/date/:year/:month/:day")
+@weather.route("/date/:year/:month/:day")
 async def log_data(request: Request, year: str, month: str, day: str):
     path = f"{consts.WEATHER_LOGS_DIR_PATH}/{year}/{month}/{day}.csv"
 
@@ -65,7 +65,7 @@ async def log_data(request: Request, year: str, month: str, day: str):
     return Response(payload=jsonify(content))
 
 
-@weather_data.route("/log/:date")
+@weather.route("/log/:date")
 async def log_for_date(request: Request, date: str):
     split_date = date.split("-")
     year, month, day = split_date
