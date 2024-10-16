@@ -3,7 +3,7 @@ from pico_weather_station import sensors_manager, cache_db
 from ds3231 import DateTime
 
 
-class WeatherSensorsLogger:
+class WeatherLogger:
     def __init__(self, logs_path: str, logs_per_hour: int):
         self.__logs_path = logs_path
         self.__logs_per_hour = logs_per_hour

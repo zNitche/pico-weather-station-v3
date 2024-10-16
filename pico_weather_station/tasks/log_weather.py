@@ -1,5 +1,5 @@
 from lightberry import ATaskBase
-from pico_weather_station.loggers import WeatherSensorsLogger
+from pico_weather_station.loggers import WeatherLogger
 from pico_weather_station import consts
 
 
@@ -10,8 +10,8 @@ class LogWeather(ATaskBase):
 
         self.weather_logs_per_hour = config.get('WEATHER_LOGS_PER_HOUR')
 
-        self.__logger = WeatherSensorsLogger(logs_path=consts.WEATHER_LOGS_DIR_PATH,
-                                             logs_per_hour=self.weather_logs_per_hour)
+        self.__logger = WeatherLogger(logs_path=consts.WEATHER_LOGS_DIR_PATH,
+                                      logs_per_hour=self.weather_logs_per_hour)
 
     async def task(self):
         try:

@@ -1,1 +1,1 @@
-from pico_weather_station.loggers.weather_sensors_logger import WeatherSensorsLogger
+from pico_weather_station.loggers.weather_logger import WeatherLogger
