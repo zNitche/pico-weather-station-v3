@@ -30,8 +30,8 @@ class CacheDB:
         current_data = self.__db.get(key)
 
         if current_data is None:
-            new_data = {value_key: value}
+            current_data = {value_key: value}
         else:
-            new_data = current_data[value_key] = value
+            current_data[value_key] = value
 
-        self.write(key, new_data)
+        self.write(key, current_data)
