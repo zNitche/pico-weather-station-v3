@@ -6,8 +6,13 @@ from pico_weather_station import cache_db, sensors_manager
 core = Router("core")
 
 
+@core.route("/healthcheck")
+async def healthcheck(request):
+    return Response(status_code=200)
+
+
 @core.route("/stats")
-async def bulk_stats(request):
+async def station_stats(request):
     datetime = sensors_manager.get_datetime()
 
     weather_logger_data = cache_db.read("weather_logger")
