@@ -1,5 +1,5 @@
 from pico_weather_station.utils import csv_utils, files_utils
-from pico_weather_station import sensors_manager, cache_db
+from pico_weather_station import devices_manager, cache_db
 from ds3231 import DateTime
 
 
@@ -21,7 +21,7 @@ class WeatherLogger:
             logs_content = csv_utils.get_csv_content(logs_path)
 
             if len(logs_content) > 0:
-                iso_date_from_log = logs_content[0].get("DATETIME")
+                iso_date_from_log = logs_content[0].get("datetime")
 
                 if iso_date_from_log is not None:
                     self.last_logged = DateTime.from_iso(iso_date_from_log)
@@ -29,7 +29,7 @@ class WeatherLogger:
         cache_db.update("weather_logger", "last_logged", self.last_logged)
 
     def log(self):
-        datetime = sensors_manager.get_datetime()
+        datetime = devices_manager.get_datetime()
 
         if self.last_logged is None:
             self.__log_sensors_data()
@@ -61,31 +61,31 @@ class WeatherLogger:
         return ["DATETIME", "TEMPERATURE", "HUMIDITY", "PRESSURE", "BATTERY_VOLTAGE", "INTERNAL_TEMP"]
 
     def __get_log_row(self):
-        temp, humidity, pressure = sensors_manager.get_env_readings()
-        bat_volt = sensors_manager.get_battery_voltage()
-        internal_temp = sensors_manager.get_internal_temp()
-        datetime = sensors_manager.get_datetime().to_iso_string()
+        temp, humidity, pressure = devices_manager.get_env_readings()
+        bat_volt = devices_manager.get_battery_voltage()
+        internal_temp = devices_manager.get_internal_temp()
+        datetime = devices_manager.get_datetime().to_iso_string()
 
         readings = [datetime, temp, humidity, pressure, bat_volt, internal_temp]
 
         return ",".join([str(v) for v in readings])
 
     def get_logs_path(self):
-        datetime = sensors_manager.get_datetime()
+        datetime = devices_manager.get_datetime()
 
         if not datetime:
             return None
 
-        log_parts_paths = [
-            f"{self.__logs_path}",
-            f"{self.__logs_path}/{datetime.year}",
-            f"{self.__logs_path}/{datetime.year}/{datetime.month}"
-        ]
+        logs_path = self.__logs_path
+        files_utils.create_dir_if_doesnt_exit(logs_path)
 
-        for path in log_parts_paths:
-            files_utils.create_dir_if_doesnt_exit(path)
+        log_parts_paths = [f"/{datetime.year}", f"/{datetime.month}"]
 
-        return f"{self.__logs_path}/{datetime.year}/{datetime.month}/{datetime.day}.csv"
+        for path_part in log_parts_paths:
+            logs_path += path_part
+            files_utils.create_dir_if_doesnt_exit(logs_path)
+
+        return f"{logs_path}/{datetime.day}.csv"
 
     def __log_sensors_data(self):
         files_utils.create_dir_if_doesnt_exit(self.__logs_path)
@@ -97,5 +97,5 @@ class WeatherLogger:
 
             csv_utils.write_row(log_path, self.__get_log_row())
 
-            self.last_logged = sensors_manager.get_datetime()
+            self.last_logged = devices_manager.get_datetime()
             cache_db.update("weather_logger", "last_logged", self.last_logged)
