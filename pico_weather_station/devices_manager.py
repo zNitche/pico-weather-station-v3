@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
     from typing import Callable
 
 
-class SensorsManager:
+class DevicesManager:
     def __init__(self, logging: bool = False):
         self.logging = logging
 
