@@ -1,4 +1,4 @@
-from pico_weather_station.modules.voltmeter import Voltmeter
-from pico_weather_station.modules.internal_temp_sensor import InternalTempSensor
+from pico_weather_station.modules.sensors.internal_temp_sensor import InternalTempSensor
+from pico_weather_station.modules.sensors.voltmeter import Voltmeter
 
 from pico_weather_station.modules.cache_db import CacheDB
