@@ -32,30 +32,22 @@ class DevicesManager:
             setattr(self, module, init_handler())
 
         except Exception as e:
-            common_utils.print_debug(f"error while initializing {module}: {str(e)}",
-                                     debug_enabled=self.logging)
+            self.__log(message=f"error while initializing {module}", exception=e)
 
-            if self.__logger:
-                self.__logger.exception(message=f"error while initializing {module}", exception=e)
-
-    def __get_readings(self, handler: Callable, fallback_value=None):
+    def __get_readings(self, module: str, handler: Callable, fallback_value=None):
         try:
             return handler()
 
         except Exception as e:
-            common_utils.print_debug(f"error while getting sensor readings: {str(e)}",
-                                     debug_enabled=self.logging)
-
-            if self.__logger:
-                self.__logger.exception(message=f"error while getting sensor readings", exception=e)
+            self.__log(message=f"error while getting sensor readings {module}", exception=e)
 
             return fallback_value
 
     def get_env_readings(self) -> tuple[float, float, float]:
-        return self.__get_readings(lambda: self.__bme_280.get_readings(), fallback_value=(0, 0, 0))
+        return self.__get_readings("__bme_280", lambda: self.__bme_280.get_readings(), fallback_value=(0, 0, 0))
 
     def get_datetime(self) -> DateTime | None:
-        return self.__get_readings(lambda: self.__rtc.get_datetime())
+        return self.__get_readings("__rtc", lambda: self.__rtc.get_datetime())
 
     def set_datetime(self, datetime: DateTime) -> bool:
         try:
@@ -70,3 +62,12 @@ class DevicesManager:
 
     def get_internal_temp(self):
         return self.__internal_temp_sensor.get_temp()
+
+    def __log(self, message: str, exception: Exception | None):
+        common_utils.print_debug(message=message, exception=exception, debug_enabled=self.logging)
+
+        if self.__logger:
+            if exception:
+                self.__logger.exception(message=message, exception=exception)
+            else:
+                self.__logger.info(message=message)
