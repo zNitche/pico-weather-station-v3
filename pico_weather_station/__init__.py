@@ -1,12 +1,12 @@
 from lightberry import typing
-from pico_weather_station.devices_manager import DevicesManager
-from pico_weather_station.modules import InternalTempSensor, CacheDB
+from pico_weather_station import consts
+from pico_weather_station.modules import InternalTempSensor, CacheDB, DevicesManager
 
 if typing.TYPE_CHECKING:
     from lightberry import App
 
 cache_db = CacheDB()
-devices_manager = DevicesManager(logging=True)
+devices_manager = DevicesManager()
 
 
 def create_routers(app: App):
@@ -15,8 +15,10 @@ def create_routers(app: App):
     core.set_catch_all_excluded_routes(app.get_routers_prefixes())
 
     app.add_router(core)
+
     app.add_router(api.sensors)
     app.add_router(api.weather)
+    app.add_router(api.logs)
 
 
 def setup_tasks(app: App):
@@ -26,6 +28,9 @@ def setup_tasks(app: App):
 
 
 def setup_app(app: App):
+    debug_enabled = app.config.get("DEBUG")
+
+    devices_manager.logging = debug_enabled
     devices_manager.setup_modules()
 
     setup_tasks(app)
