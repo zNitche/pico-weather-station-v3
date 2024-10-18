@@ -12,6 +12,14 @@ def check_if_exists(path: str):
     return False
 
 
-def create_dir_if_doesnt_exit(dir_path: str):
+def create_dir_if_doesnt_exist(dir_path: str):
     if not check_if_exists(dir_path):
-        os.mkdir(dir_path)
+        path = ""
+        path_parts = dir_path.split("/")
+
+        for part in path_parts:
+            if part:
+                path += f"/{part}"
+
+                if not check_if_exists(path):
+                    os.mkdir(path)

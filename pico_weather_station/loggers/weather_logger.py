@@ -1,5 +1,5 @@
 from pico_weather_station.utils import csv_utils, files_utils
-from pico_weather_station import devices_manager, cache_db
+from pico_weather_station import devices_manager, cache_db, logger
 from ds3231 import DateTime
 
 
@@ -76,19 +76,13 @@ class WeatherLogger:
         if not datetime:
             return None
 
-        logs_path = self.__logs_path
-        files_utils.create_dir_if_doesnt_exit(logs_path)
+        logs_dir_path = f"{self.__logs_path}/{datetime.year}/{datetime.month}"
+        files_utils.create_dir_if_doesnt_exist(logs_dir_path)
 
-        log_parts_paths = [f"/{datetime.year}", f"/{datetime.month}"]
-
-        for path_part in log_parts_paths:
-            logs_path += path_part
-            files_utils.create_dir_if_doesnt_exit(logs_path)
-
-        return f"{logs_path}/{datetime.day}.csv"
+        return f"{logs_dir_path}/{datetime.day}.csv"
 
     def __log_sensors_data(self):
-        files_utils.create_dir_if_doesnt_exit(self.__logs_path)
+        files_utils.create_dir_if_doesnt_exist(self.__logs_path)
         log_path = self.get_logs_path()
 
         if log_path is not None:
@@ -98,4 +92,6 @@ class WeatherLogger:
             csv_utils.write_row(log_path, self.__get_log_row())
 
             self.last_logged = devices_manager.get_datetime()
+
             cache_db.update("weather_logger", "last_logged", self.last_logged)
+            logger.info(message="weather data has been logged successfully")
