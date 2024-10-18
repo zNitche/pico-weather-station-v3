@@ -35,6 +35,8 @@ def setup_app(app: App):
     logger.debug_enabled = debug_enabled
 
     devices_manager.logging = debug_enabled
+    devices_manager.set_logger(logger)
+
     devices_manager.setup_modules()
 
     setup_tasks(app)

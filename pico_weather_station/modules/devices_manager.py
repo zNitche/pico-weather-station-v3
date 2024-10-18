@@ -3,21 +3,25 @@ from lightberry.utils import common_utils
 from bme280 import BME280
 from ds3231 import DS3231, DateTime
 from pico_weather_station import machine_interfaces
-from pico_weather_station.modules import Voltmeter, InternalTempSensor
+from pico_weather_station.modules import Voltmeter, InternalTempSensor, Logger
 
 if typing.TYPE_CHECKING:
     from typing import Callable
 
 
 class DevicesManager:
-    def __init__(self, logging: bool = False):
+    def __init__(self, logging: bool = False, logger: Logger | None = None):
         self.logging = logging
+        self.__logger = logger
 
         self.__rtc: DS3231 | None = None
         self.__bme_280: BME280 | None = None
 
         self.__battery_voltmeter = Voltmeter()
         self.__internal_temp_sensor = InternalTempSensor()
+
+    def set_logger(self, logger: Logger):
+        self.__logger = logger
 
     def setup_modules(self):
         self.__init_device("__rtc", lambda: DS3231(machine_interfaces.i2c_0))
@@ -31,6 +35,9 @@ class DevicesManager:
             common_utils.print_debug(f"error while initializing {module}: {str(e)}",
                                      debug_enabled=self.logging)
 
+            if self.__logger:
+                self.__logger.exception(message=f"error while initializing {module}", exception=e)
+
     def __get_readings(self, handler: Callable, fallback_value=None):
         try:
             return handler()
@@ -38,6 +45,10 @@ class DevicesManager:
         except Exception as e:
             common_utils.print_debug(f"error while getting sensor readings: {str(e)}",
                                      debug_enabled=self.logging)
+
+            if self.__logger:
+                self.__logger.exception(message=f"error while getting sensor readings", exception=e)
+
             return fallback_value
 
     def get_env_readings(self) -> tuple[float, float, float]:
