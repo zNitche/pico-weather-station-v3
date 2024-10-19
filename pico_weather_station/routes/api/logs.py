@@ -1,5 +1,5 @@
 import os
-from lightberry import Router, Response
+from lightberry import Router, Response, FileResponse
 from lightberry.shortcuts import jsonify
 from pico_weather_station import consts
 from pico_weather_station.utils import files_utils
@@ -22,10 +22,4 @@ async def all_logs(request):
 async def log_content(request, date: str):
     log_path = f"{consts.LOGS_DIR_PATH}/{date}.txt"
 
-    if not files_utils.check_if_exists(log_path):
-        return Response(status_code=404)
-
-    with open(log_path, "r") as file:
-        rows = [row.replace("\n", "") for row in file.readlines()]
-
-    return Response(payload=jsonify(rows))
+    return FileResponse(file_path=log_path)
