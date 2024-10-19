@@ -1,10 +1,12 @@
 from pico_weather_station.utils import csv_utils, files_utils
-from pico_weather_station import devices_manager, cache_db, logger
+from pico_weather_station import devices_manager, cache_db
 from ds3231 import DateTime
 
 
-class WeatherLogger:
-    def __init__(self, logs_path: str, logs_per_hour: int):
+class DataLoggerBase:
+    def __init__(self, logs_path: str, logs_per_hour: int, name: str):
+        self.name = name
+
         self.__logs_path = logs_path
         self.__logs_per_hour = logs_per_hour
 
@@ -26,13 +28,13 @@ class WeatherLogger:
                 if iso_date_from_log is not None:
                     self.last_logged = DateTime.from_iso(iso_date_from_log)
 
-        cache_db.update("weather_logger", "last_logged", self.last_logged)
+        cache_db.update(self.name, "last_logged", self.last_logged)
 
     def log(self):
         datetime = devices_manager.get_datetime()
 
         if self.last_logged is None:
-            self.__log_sensors_data()
+            self.__log_handler()
 
         else:
             for schedule_time in self.logging_schedule:
@@ -41,7 +43,7 @@ class WeatherLogger:
 
                 if schedule_hour == datetime.hour and schedule_minute == datetime.minutes:
                     if not (self.last_logged.hour == datetime.hour and self.last_logged.minutes == datetime.minutes):
-                        self.__log_sensors_data()
+                        self.__log_handler()
                         break
 
     def __get_logging_schedule(self):
@@ -57,19 +59,6 @@ class WeatherLogger:
 
         return schedule
 
-    def get_logs_header(self):
-        return ["DATETIME", "TEMPERATURE", "HUMIDITY", "PRESSURE", "BATTERY_VOLTAGE", "INTERNAL_TEMP"]
-
-    def __get_log_row(self):
-        temp, humidity, pressure = devices_manager.get_env_readings()
-        bat_volt = devices_manager.get_battery_voltage()
-        internal_temp = devices_manager.get_internal_temp()
-        datetime = devices_manager.get_datetime().to_iso_string()
-
-        readings = [datetime, temp, humidity, pressure, bat_volt, internal_temp]
-
-        return ",".join([str(v) for v in readings])
-
     def get_logs_path(self):
         datetime = devices_manager.get_datetime()
 
@@ -81,17 +70,11 @@ class WeatherLogger:
 
         return f"{logs_dir_path}/{datetime.day}.csv"
 
-    def __log_sensors_data(self):
-        files_utils.create_dir_if_doesnt_exist(self.__logs_path)
-        log_path = self.get_logs_path()
+    def get_logs_header(self):
+        raise NotImplemented()
 
-        if log_path is not None:
-            if not files_utils.check_if_exists(log_path):
-                csv_utils.init_csv_file(log_path, self.get_logs_header())
+    def __get_log_row(self):
+        raise NotImplemented()
 
-            csv_utils.write_row(log_path, self.__get_log_row())
-
-            self.last_logged = devices_manager.get_datetime()
-
-            cache_db.update("weather_logger", "last_logged", self.last_logged)
-            logger.info(message="weather data has been logged successfully")
+    def __log_handler(self):
+        raise NotImplemented()
