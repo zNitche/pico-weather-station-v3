@@ -25,7 +25,7 @@ def parse_row(row: str, header: list[str]):
     parsed_row = {}
 
     for index, header_item in enumerate(header):
-        parsed_row[header_item.lower()] = split_row[index]
+        parsed_row[header_item] = split_row[index]
 
     return parsed_row
 
