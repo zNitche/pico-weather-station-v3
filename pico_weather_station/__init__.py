@@ -27,6 +27,7 @@ def setup_tasks(app: App):
     from pico_weather_station import tasks
 
     app.add_background_task(tasks.LogWeather(config=app.config))
+    app.add_background_task(tasks.ToggleWlan(config=app.config, server_handler=app.server_handlers_manager))
 
 
 def setup_app(app: App):
