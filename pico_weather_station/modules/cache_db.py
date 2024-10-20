@@ -5,8 +5,8 @@ class CacheDB:
     def read_all(self):
         return self.__db
 
-    def read(self, key: str):
-        return self.__db.get(key)
+    def read(self, key: str, fallback_value=None):
+        return self.__db.get(key, fallback_value)
 
     def write(self, key: str, value):
         self.__db[key] = value
