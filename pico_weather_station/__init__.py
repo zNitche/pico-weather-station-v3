@@ -19,7 +19,8 @@ def create_routers(app: App):
     app.add_router(core)
 
     app.add_router(api.sensors)
-    app.add_router(api.weather)
+    app.add_router(api.data_logs)
+
     app.add_router(api.logs)
     app.add_router(api.vitals)
 
@@ -27,8 +28,10 @@ def create_routers(app: App):
 def setup_tasks(app: App):
     from pico_weather_station import tasks
 
-    app.add_background_task(tasks.LogWeather(config=app.config))
     app.add_background_task(tasks.ToggleWlan(config=app.config, server_handler=app.server_handlers_manager))
+
+    app.add_background_task(tasks.LogWeather(config=app.config))
+    app.add_background_task(tasks.LogVitals(config=app.config))
 
 
 def setup_app(app: App):
