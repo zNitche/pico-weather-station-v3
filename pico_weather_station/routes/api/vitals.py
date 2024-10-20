@@ -18,7 +18,9 @@ async def stats(request):
 
     for logger in active_loggers:
         logger_data = cache_db.read(logger)
-        last_log_for_loggers[logger] = logger_data.get("last_logged") if logger_data else None
+        last_log_date = logger_data.get("last_logged") if logger_data else None
+
+        last_log_for_loggers[logger] = last_log_date.to_iso_string() if last_log_date else None
 
     datetime = devices_manager.get_datetime()
 
@@ -26,6 +28,7 @@ async def stats(request):
         "datetime": datetime.to_iso_string() if datetime else None,
         "battery_voltage": devices_manager.get_battery_voltage(),
         "internal_temperature": devices_manager.get_internal_temp(),
+        "active_loggers": active_loggers,
         "last_log_for_loggers": last_log_for_loggers
     }
 
