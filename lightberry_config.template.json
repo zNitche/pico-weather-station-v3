@@ -8,6 +8,7 @@
   "App": {
     "DEBUG": false,
     "WEATHER_LOGS_PER_HOUR": 4,
+    "VITALS_LOGS_PER_HOUR": 4,
     "WLAN_SCHEDULE": [23, 6]
   }
 }
