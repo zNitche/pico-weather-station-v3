@@ -12,16 +12,21 @@ async def healthcheck(request):
 
 
 @vitals.route("/stats")
-async def station_stats(request):
-    datetime = devices_manager.get_datetime()
+async def stats(request):
+    last_log_for_loggers = {}
+    active_loggers = cache_db.read(key="active_data_loggers", fallback_value=[])
 
-    weather_logger_data = cache_db.read("weather_logger")
-    last_weather_log = weather_logger_data.get("last_logged") if weather_logger_data else None
+    for logger in active_loggers:
+        logger_data = cache_db.read(logger)
+        last_log_for_loggers[logger] = logger_data.get("last_logged") if logger_data else None
+
+    datetime = devices_manager.get_datetime()
 
     data = {
         "datetime": datetime.to_iso_string() if datetime else None,
         "battery_voltage": devices_manager.get_battery_voltage(),
-        "last_weather_log": last_weather_log.to_iso_string() if last_weather_log else None
+        "internal_temperature": devices_manager.get_internal_temp(),
+        "last_log_for_loggers": last_log_for_loggers
     }
 
     return Response(payload=jsonify(data))
