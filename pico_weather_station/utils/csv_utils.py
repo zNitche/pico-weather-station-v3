@@ -1,3 +1,6 @@
+from pico_weather_station.utils import mem_utils
+
+
 def init_csv_file(file_path: str, header: list[str]):
     with open(file_path, "w") as file:
         file.write(",".join(header) + "\n")
@@ -30,15 +33,20 @@ def parse_row(row: str, header: list[str]):
     return parsed_row
 
 
-def get_csv_content(file_path: str):
+def get_csv_content(file_path: str, skip: int = 0, limit: int = 0):
+    mem_utils.reset_heap()
+
     content = []
     header = get_header(file_path)
 
     if header:
         with open(file_path, "r") as file:
             for id, row in enumerate(file):
-                if id > 0:
+                if id > 0 + skip:
                     content.append(parse_row(row, header))
+
+                    if 0 < limit <= len(content):
+                        break
 
     return content
 
