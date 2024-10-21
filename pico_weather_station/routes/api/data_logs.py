@@ -1,6 +1,6 @@
 import os
-from lightberry import Router, Response, typing
-from lightberry.shortcuts import jsonify
+from lightberry import Router, Response, typing, FileResponse
+from lightberry.shortcuts import jsonify, is_query_param_equal, cast_query_param_to
 from pico_weather_station import consts, cache_db
 from pico_weather_station.utils import files_utils, csv_utils
 
@@ -28,27 +28,12 @@ async def logged_years(request: Request, logger_name: str):
     return Response(payload=jsonify({"years": os.listdir(path)}))
 
 
-@data_logs.route("/logs/:logger_name/:date")
-async def log_for_date(request: Request, logger_name: str, date: str):
-    split_date = date.split("-")
-    year, month, day = split_date
-
-    file_path = f"{consts.DATA_LOGS_DIR_PATH}/{logger_name}/{year}/{month}/{day}.csv"
-
-    if not files_utils.check_if_exists(file_path):
-        return Response(status_code=404)
-
-    content = csv_utils.get_csv_content(file_path)
-
-    return Response(payload=jsonify(content))
-
-
 @data_logs.route("/date/:logger_name/:year")
 async def logged_months(request: Request, logger_name: str, year: str):
     path = f"{consts.DATA_LOGS_DIR_PATH}/{logger_name}/{year}"
     months_logs = os.listdir(path) if files_utils.check_if_exists(path) else []
 
-    include_days = True if request.query_params.get("include_days") == "1" else False
+    include_days = is_query_param_equal(request, "include_days", "1")
     logs_data = []
 
     if not include_days:
@@ -79,11 +64,19 @@ async def logged_days(request: Request, logger_name: str, year: str, month: str)
 
 @data_logs.route("/date/:logger_name/:year/:month/:day")
 async def log_data(request: Request, logger_name: str, year: str, month: str, day: str):
+    raw = is_query_param_equal(request, "raw", "1")
+
+    skip = cast_query_param_to(request, "skip", int, 0)
+    limit = cast_query_param_to(request, "limit", int, 0)
+
     path = f"{consts.DATA_LOGS_DIR_PATH}/{logger_name}/{year}/{month}/{day}.csv"
 
     if not files_utils.check_if_exists(path):
         return Response(status_code=404)
 
-    content = csv_utils.get_csv_content(path)
+    if raw:
+        return FileResponse(file_path=path)
+
+    content = csv_utils.get_csv_content(file_path=path, limit=limit, skip=skip)
 
     return Response(payload=jsonify(content))
