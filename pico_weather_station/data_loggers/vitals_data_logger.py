@@ -14,6 +14,4 @@ class VitalsDataLogger(DataLoggerBase):
         internal_temp = devices_manager.get_internal_temp()
         datetime = devices_manager.get_datetime().to_iso_string()
 
-        readings = [datetime, internal_temp, bat_volt]
-
-        return ",".join([str(v) for v in readings])
+        return [datetime, internal_temp, bat_volt]

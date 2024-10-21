@@ -84,7 +84,8 @@ class DataLoggerBase:
             if not files_utils.check_if_exists(log_path):
                 csv_utils.init_csv_file(log_path, self.get_logs_header())
 
-            csv_utils.write_row(log_path, self.__get_log_row())
+            rows = ",".join([str(v) for v in self.__get_log_row()])
+            csv_utils.write_row(log_path, rows)
 
             self.last_logged = devices_manager.get_datetime()
             cache_db.update(self.name, "last_logged", self.last_logged)\

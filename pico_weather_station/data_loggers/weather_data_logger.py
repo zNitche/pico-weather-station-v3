@@ -7,17 +7,13 @@ class WeatherDataLogger(DataLoggerBase):
         super().__init__(logs_per_hour=logs_per_hour, name="weather_logger")
 
     def get_logs_header(self):
-        return ["datetime", "temperature", "humidity", "pressure", "battery_voltage", "internal_temp"]
+        return ["datetime", "temperature", "humidity", "pressure"]
 
     def __get_log_row(self):
         temp, humidity, pressure = devices_manager.get_env_readings()
-        bat_volt = devices_manager.get_battery_voltage()
-        internal_temp = devices_manager.get_internal_temp()
         datetime = devices_manager.get_datetime().to_iso_string()
 
-        readings = [datetime, temp, humidity, pressure, bat_volt, internal_temp]
-
-        return ",".join([str(v) for v in readings])
+        return [datetime, temp, humidity, pressure]
 
     def __after_logged(self):
         logger.info(message="weather data has been logged successfully")
