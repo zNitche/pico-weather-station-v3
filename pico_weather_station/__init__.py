@@ -14,15 +14,16 @@ logger = Logger(max_log_files=7, datetime_getter=devices_manager.get_datetime)
 def create_routers(app: App):
     from pico_weather_station.routes import core, api
 
-    core.set_catch_all_excluded_routes(app.get_routers_prefixes())
-
-    app.add_router(core)
+    app.add_router(api.settings)
 
     app.add_router(api.sensors)
     app.add_router(api.data_logs)
 
     app.add_router(api.logs)
     app.add_router(api.vitals)
+
+    core.set_catch_all_excluded_routes(app.get_routers_prefixes())
+    app.add_router(core)
 
 
 def setup_tasks(app: App):
