@@ -49,9 +49,10 @@ class DevicesManager:
     def get_datetime(self) -> DateTime | None:
         return self.__get_readings("__rtc", lambda: self.__rtc.get_datetime())
 
-    def set_datetime(self, datetime: DateTime) -> bool:
+    def set_datetime(self, datetime: DateTime | str) -> bool:
         try:
-            self.__rtc.set_datetime(datetime)
+            dt = DateTime.from_iso(datetime) if type(datetime) == str else datetime
+            self.__rtc.set_datetime(dt)
             return True
 
         except:
