@@ -4,6 +4,6 @@ from lightberry import Router, Response
 core = Router("core")
 
 
-@core.route("/")
-async def healthcheck(request):
+@core.catch_all()
+async def home(request):
     return Response(payload="Hello World")
