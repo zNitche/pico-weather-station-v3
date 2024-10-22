@@ -10,7 +10,7 @@ class WeatherDataLogger(DataLoggerBase):
         return ["datetime", "temperature", "humidity", "pressure"]
 
     def __get_log_row(self):
-        temp, humidity, pressure = devices_manager.get_env_readings()
+        temp, pressure, humidity = devices_manager.get_env_readings()
         datetime = devices_manager.get_datetime().to_iso_string()
 
         return [datetime, temp, humidity, pressure]
