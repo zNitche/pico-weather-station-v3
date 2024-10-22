@@ -11,8 +11,9 @@ class DataLoggerBase:
         self.__logs_per_hour = logs_per_hour
 
         self.logging_schedule = self.__get_logging_schedule()
-
         self.last_logged: DateTime | None = None
+
+        self._data_for_log: any = None
 
         self.__setup()
 
@@ -21,12 +22,10 @@ class DataLoggerBase:
 
         if files_utils.check_if_exists(logs_path):
             logs_content = csv_utils.get_csv_content(logs_path)
+            iso_date_from_log = logs_content[-1].get("datetime") if len(logs_content) > 0 else None
 
-            if len(logs_content) > 0:
-                iso_date_from_log = logs_content[0].get("datetime")
-
-                if iso_date_from_log is not None:
-                    self.last_logged = DateTime.from_iso(iso_date_from_log)
+            if iso_date_from_log is not None:
+                self.last_logged = DateTime.from_iso(iso_date_from_log)
 
         cache_db.update(self.name, "last_logged", self.last_logged)
 
@@ -36,21 +35,28 @@ class DataLoggerBase:
             active_loggers.append(self.name)
             cache_db.write(key="active_data_loggers", value=active_loggers)
 
-    def log(self):
-        datetime = devices_manager.get_datetime()
+    def set_data_for_log(self, data: any):
+        self._data_for_log = data
 
-        if self.last_logged is None:
+    def log(self, force: bool = False):
+        if self.can_log() or force:
             self.__log_handler()
 
-        else:
-            for schedule_time in self.logging_schedule:
-                schedule_hour = schedule_time[0]
-                schedule_minute = schedule_time[1]
+    def can_log(self):
+        if self.last_logged is None:
+            return True
 
-                if schedule_hour == datetime.hour and schedule_minute == datetime.minutes:
-                    if not (self.last_logged.hour == datetime.hour and self.last_logged.minutes == datetime.minutes):
-                        self.__log_handler()
-                        break
+        datetime = devices_manager.get_datetime()
+
+        for schedule_time in self.logging_schedule:
+            schedule_hour = schedule_time[0]
+            schedule_minute = schedule_time[1]
+
+            if schedule_hour == datetime.hour and schedule_minute == datetime.minutes:
+                if not (self.last_logged.hour == datetime.hour and self.last_logged.minutes == datetime.minutes):
+                    return True
+
+        return False
 
     def __get_logging_schedule(self):
         schedule = []
@@ -91,6 +97,7 @@ class DataLoggerBase:
             cache_db.update(self.name, "last_logged", self.last_logged)\
 
             self.__after_logged()
+            self._data_for_log = None
 
     def get_logs_header(self):
         raise NotImplemented()
