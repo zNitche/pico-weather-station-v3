@@ -5,6 +5,7 @@ from pico_weather_station.modules import InternalTempSensor, CacheDB, DevicesMan
 if typing.TYPE_CHECKING:
     from lightberry import App
 
+
 cache_db = CacheDB()
 devices_manager = DevicesManager()
 
@@ -33,6 +34,9 @@ def setup_tasks(app: App):
 
     app.add_background_task(tasks.LogWeather(config=app.config))
     app.add_background_task(tasks.LogVitals(config=app.config))
+
+    if app.config.get("MPPT_LOGGING_ENABLED"):
+        app.add_background_task(tasks.LogMPPTData(config=app.config))
 
 
 def setup_app(app: App):
