@@ -31,7 +31,11 @@ async def logged_years(request: Request, logger_name: str):
 @data_logs.route("/date/:logger_name/:year")
 async def logged_months(request: Request, logger_name: str, year: str):
     path = f"{consts.DATA_LOGS_DIR_PATH}/{logger_name}/{year}"
-    months_logs = os.listdir(path) if files_utils.check_if_exists(path) else []
+
+    if not files_utils.check_if_exists(path):
+        return Response(status_code=404)
+
+    months_logs = os.listdir(path)
 
     include_days = is_query_param_equal(request, "include_days", "1")
     logs_data = []
