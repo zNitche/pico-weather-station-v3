@@ -7,9 +7,9 @@ class LogWeather(ATaskBase):
     def __init__(self, config: dict[str, any]):
         super().__init__(periodic_interval=30, init_delay=30, logging=config.get("DEBUG"))
 
-        self.weather_logs_per_hour = config.get('WEATHER_LOGS_PER_HOUR')
+        self.__logs_per_hour = config.get('WEATHER_LOGS_PER_HOUR')
 
-        self.__weather_logger = WeatherDataLogger(logs_per_hour=self.weather_logs_per_hour)
+        self.__weather_logger = WeatherDataLogger(logs_per_hour=self.__logs_per_hour)
 
     async def task(self):
         try:
