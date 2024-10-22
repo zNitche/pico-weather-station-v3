@@ -15,7 +15,7 @@ class DevicesManager:
         self.__logger = logger
 
         self.__rtc: DS3231 | None = None
-        self.__bme_280: BME280 | None = None
+        self.__bme280: BME280 | None = None
 
         self.__battery_voltmeter = Voltmeter()
         self.__internal_temp_sensor = InternalTempSensor()
@@ -44,10 +44,10 @@ class DevicesManager:
             return fallback_value
 
     def get_env_readings(self) -> tuple[float, float, float]:
-        return self.__get_readings("__bme_280", lambda: self.__bme_280.get_readings(), fallback_value=(0, 0, 0))
+        return self.__get_readings("bme280", lambda: self.__bme280.get_readings(), fallback_value=(0, 0, 0))
 
     def get_datetime(self) -> DateTime | None:
-        return self.__get_readings("__rtc", lambda: self.__rtc.get_datetime())
+        return self.__get_readings("rtc", lambda: self.__rtc.get_datetime())
 
     def set_datetime(self, datetime: DateTime | str) -> bool:
         try:
