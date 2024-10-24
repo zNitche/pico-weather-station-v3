@@ -60,9 +60,9 @@ class DataLoggerBase:
 
     def __get_logging_schedule(self):
         schedule = []
+        minutes_every_log = 60 // self.__logs_per_hour
 
         for hour in range(24):
-            minutes_every_log = 60 // self.__logs_per_hour
             current_minutes = 0
 
             for _ in range(self.__logs_per_hour):
