@@ -81,6 +81,9 @@ async def log_data(request: Request, logger_name: str, year: str, month: str, da
     if raw:
         return FileResponse(file_path=path)
 
-    content = csv_utils.get_csv_content(file_path=path, limit=limit, skip=skip)
+    content = {
+        "total_count": csv_utils.get_rows_count(file_path=path),
+        "items": csv_utils.get_csv_content(file_path=path, limit=limit, skip=skip)
+    }
 
     return Response(payload=jsonify(content))
