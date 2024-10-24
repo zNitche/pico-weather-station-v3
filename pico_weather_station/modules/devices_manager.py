@@ -25,11 +25,12 @@ class DevicesManager:
 
     def setup_modules(self):
         self.__init_device("__rtc", lambda: DS3231(machine_interfaces.i2c_0))
-        self.__init_device("__bme_280", lambda: BME280(machine_interfaces.i2c_0))
+        self.__init_device("__bme280", lambda: BME280(machine_interfaces.i2c_0))
 
     def __init_device(self, module: str, init_handler: Callable):
         try:
-            setattr(self, module, init_handler())
+            if hasattr(self, module):
+                setattr(self, module, init_handler())
 
         except Exception as e:
             self.__log(message=f"error while initializing {module}", exception=e)
@@ -65,7 +66,9 @@ class DevicesManager:
         return self.__internal_temp_sensor.get_temp()
 
     def __log(self, message: str, exception: Exception | None):
-        common_utils.print_debug(message=message, exception=exception, debug_enabled=self.logging)
+        common_utils.print_debug(origin="DEVICES_MANAGER",
+                                 message=message, exception=exception,
+                                 debug_enabled=self.logging)
 
         if self.__logger:
             if exception:
