@@ -3,9 +3,9 @@ from pico_weather_station.data_loggers.data_logger_base import DataLoggerBase
 from pico_weather_station.modules.integrations import ResponseItem
 
 
-class MPPTDataLogger(DataLoggerBase):
+class PVDataLogger(DataLoggerBase):
     def __init__(self, logs_per_hour: int):
-        super().__init__(logs_per_hour=logs_per_hour, name="mppt_data_logger")
+        super().__init__(logs_per_hour=logs_per_hour, name="pv_logger")
 
     def get_logs_header(self):
         return ["datetime", "battery_capacity", "battery_voltage", "battery_current", "load_voltage",
@@ -27,4 +27,4 @@ class MPPTDataLogger(DataLoggerBase):
                 load_current, solar_voltage, solar_current]
 
     def __after_logged(self):
-        logger.info(message="mppt data has been logged successfully")
+        logger.info(message="pv data has been logged successfully")
