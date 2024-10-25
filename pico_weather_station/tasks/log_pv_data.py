@@ -1,3 +1,4 @@
+import asyncio
 from lightberry import ATaskBase, typing
 from pico_weather_station.data_loggers import PVDataLogger
 from pico_weather_station import logger, integrations_manager
@@ -31,6 +32,11 @@ class LogPvData(ATaskBase):
                         self.__data_logger.log(force=True)
 
                         break
+
+                    await asyncio.sleep(2)
+
+                if data is None:
+                    raise Exception("no data received")
 
         except Exception as e:
             self._print_log(message="Error while logging pv data", exception=e)
