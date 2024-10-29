@@ -54,9 +54,8 @@ class Logger:
     def __check_logs_files(self):
         log_files = sorted(os.listdir(self.logs_path))
 
-        if len(log_files) >= self.max_log_files:
-            log_to_be_removed = f"{self.logs_path}/{log_files[-1]}"
-            os.remove(log_to_be_removed)
+        if len(log_files) > self.max_log_files:
+            os.remove(f"{self.logs_path}/{log_files[0]}")
 
     def exception(self, message: str, exception: Exception = None):
         self.__log(message=message, exception=exception, level=LoggerLevel.EXCEPTION)
