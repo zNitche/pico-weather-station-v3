@@ -25,12 +25,17 @@ class DevicesManager:
 
     def setup_modules(self):
         self.__init_device("__rtc", lambda: DS3231(machine_interfaces.i2c_0))
-        self.__init_device("__bme280", lambda: BME280(machine_interfaces.i2c_0))
+        self.__init_device("__bme280", lambda: BME280(machine_interfaces.i2c_0),
+                           post_init=lambda: self.__bme280.get_readings()) # <- workaround for bme280 first read spike
 
-    def __init_device(self, module: str, init_handler: Callable):
+    def __init_device(self, module: str, init_handler: Callable, post_init: Callable | None = None):
         try:
             if hasattr(self, module):
-                setattr(self, module, init_handler())
+                mod = init_handler()
+                setattr(self, module, mod)
+
+                if post_init is not None:
+                    post_init()
 
         except Exception as e:
             self.__log(message=f"error while initializing {module}", exception=e)
@@ -73,5 +78,6 @@ class DevicesManager:
         if self.__logger:
             if exception:
                 self.__logger.exception(message=message, exception=exception)
+
             else:
                 self.__logger.info(message=message)
