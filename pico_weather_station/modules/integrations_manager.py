@@ -11,7 +11,6 @@ class IntegrationsManager:
         self.logging = False
 
         self.__mppt_reader: MpptReader | None = None
-        self.__mppt_request_items = self.__get_mppt_request_items()
 
     def setup_devices(self, config: Type[AppConfig]):
         self.__init_mppt_reader(device_address=config.get("SOLAR_REGULATOR_BLE_MAC_ADDRESS"))
@@ -26,7 +25,7 @@ class IntegrationsManager:
                                         notify_char_uuid=0xff01,
                                         logging=self.logging)
 
-    def __get_mppt_request_items(self):
+    def get_mppt_request_items(self):
         request_items = [
             RequestItem("12357", "Battery remaining capacity", 1, "%"),
             RequestItem("12358", "Battery voltage", 100, "V"),
@@ -43,10 +42,11 @@ class IntegrationsManager:
 
         return request_items
 
-    async def get_pv_readings(self):
-        data = await self.__mppt_reader.read(self.__mppt_request_items)
+    async def get_pv_readings(self, request_items: list[RequestItem] | None = None):
+        request_items = request_items if request_items is not None else self.get_mppt_request_items()
+        data = await self.__mppt_reader.read(request_items)
 
-        if data is None or len(data) != len(self.__mppt_request_items):
+        if data is None or len(data) != len(request_items):
             return None
 
         return data

@@ -23,9 +23,10 @@ class LogPvData(ATaskBase):
 
             if self.__data_logger.can_log():
                 data = None
+                request_items = integrations_manager.get_mppt_request_items()
 
                 for _ in range(tries):
-                    data = await integrations_manager.get_pv_readings()
+                    data = await integrations_manager.get_pv_readings(request_items=request_items)
 
                     if data is not None:
                         self.__data_logger.set_data_for_log(data)
