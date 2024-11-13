@@ -1,4 +1,5 @@
 import time
+import gc
 from ds3231 import DateTime
 from pico_weather_station import machine_interfaces
 
@@ -16,3 +17,11 @@ def get_iso_time() -> str | None:
         return f"{tt[0]}-{tt[1]}-{tt[2]}T{tt[3]:02d}:{tt[4]:02d}:{tt[5]:02d}.000Z"
     except:
         return None
+
+
+def reset_heap(threshold: int = 8192):
+    """use before memory heavy operations like allocating large lists / dicts"""
+    gc.collect()
+
+    #gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+    gc.threshold(threshold)

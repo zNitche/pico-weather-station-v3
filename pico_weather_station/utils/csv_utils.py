@@ -1,4 +1,4 @@
-from pico_weather_station.utils import mem_utils
+from pico_weather_station.utils import machine_utils
 
 
 def init_csv_file(file_path: str, header: list[str]):
@@ -34,7 +34,7 @@ def parse_row(row: str, header: list[str]):
 
 
 def get_csv_content(file_path: str, skip: int = 0, limit: int = 0):
-    mem_utils.reset_heap()
+    machine_utils.reset_heap()
 
     content = []
     header = get_header(file_path)
