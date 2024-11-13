@@ -45,6 +45,18 @@ def setup_tasks(app: App):
         app.add_background_task(tasks.LogPvData(config=app.config))
 
 
+def init_machine_interfaces():
+    from pico_weather_station import machine_interfaces
+
+    current_time = devices_manager.get_datetime()
+
+    if current_time:
+        machine_interfaces.rtc.datetime([
+            current_time.year, current_time.month, current_time.day, 0,
+            current_time.hour, current_time.minutes, current_time.seconds, 0
+        ])
+
+
 def setup_app(app: App):
     debug_enabled = app.config.get("DEBUG")
     logger.debug_enabled = debug_enabled
@@ -55,6 +67,9 @@ def setup_app(app: App):
 
     integrations_manager.logging = debug_enabled
     integrations_manager.setup_devices(config=app.config)
+
+    init_machine_interfaces()
+    logger.info(message="machine interfaces setup completed...")
 
     setup_tasks(app)
     create_routers(app)

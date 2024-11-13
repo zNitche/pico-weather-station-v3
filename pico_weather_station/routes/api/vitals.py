@@ -1,6 +1,7 @@
 from lightberry import Router, Response
 from lightberry.shortcuts import jsonify
 from pico_weather_station import cache_db, devices_manager
+from pico_weather_station.utils import machine_utils
 
 
 vitals = Router("vitals", url_prefix="/api/vitals")
@@ -25,7 +26,10 @@ async def stats(request):
     datetime = devices_manager.get_datetime()
 
     data = {
-        "datetime": datetime.to_iso_string() if datetime else None,
+        "datetime": {
+            "internal": machine_utils.get_iso_time(),
+            "external": datetime.to_iso_string() if datetime else None,
+        },
         "battery_voltage": devices_manager.get_battery_voltage(),
         "internal_temperature": devices_manager.get_internal_temp(),
         "active_loggers": active_loggers,
