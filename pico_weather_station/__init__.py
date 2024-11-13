@@ -35,6 +35,7 @@ def create_routers(app: App):
 def setup_tasks(app: App):
     from pico_weather_station import tasks
 
+    app.add_background_task(tasks.SyncInternalRTC(config=app.config))
     app.add_background_task(tasks.ToggleWlan(config=app.config,
                                              server_handlers_manager=app.server_handlers_manager))
 
@@ -45,16 +46,13 @@ def setup_tasks(app: App):
         app.add_background_task(tasks.LogPvData(config=app.config))
 
 
-def init_machine_interfaces():
-    from pico_weather_station import machine_interfaces
+def setup_machine_interfaces():
+    from pico_weather_station.utils import machine_utils
 
     current_time = devices_manager.get_datetime()
 
     if current_time:
-        machine_interfaces.rtc.datetime([
-            current_time.year, current_time.month, current_time.day, 0,
-            current_time.hour, current_time.minutes, current_time.seconds, 0
-        ])
+        machine_utils.set_internal_rtc_time(current_time)
 
 
 def setup_app(app: App):
@@ -68,7 +66,7 @@ def setup_app(app: App):
     integrations_manager.logging = debug_enabled
     integrations_manager.setup_devices(config=app.config)
 
-    init_machine_interfaces()
+    setup_machine_interfaces()
     logger.info(message="machine interfaces setup completed...")
 
     setup_tasks(app)

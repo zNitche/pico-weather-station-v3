@@ -41,7 +41,7 @@ class Logger:
             log_file_path = f"{self.logs_path}/{log_file_name}"
 
             with open(log_file_path, "a+") as file:
-                file.write(f"{datetime.hour}:{datetime.minutes}:{datetime.seconds} - {level} - {message}")
+                file.write(f"{datetime.hour:02d}:{datetime.minutes:02d}:{datetime.seconds:02d} - {level} - {message}")
                 file.write("\n")
 
                 if exception is not None:
