@@ -1,4 +1,13 @@
 import time
+from ds3231 import DateTime
+from pico_weather_station import machine_interfaces
+
+
+def set_internal_rtc_time(datetime: DateTime):
+    machine_interfaces.rtc.datetime([
+        datetime.year, datetime.month, datetime.day, 0,
+        datetime.hour, datetime.minutes, datetime.seconds, 0
+    ])
 
 
 def get_iso_time() -> str | None:
