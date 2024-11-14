@@ -1,7 +1,8 @@
 import os
 import sys
+import time
 from lightberry import typing
-from lightberry.utils import common_utils
+from lightberry.utils import common_utils, files_utils
 from pico_weather_station.utils import files_utils
 from pico_weather_station import consts
 
@@ -36,9 +37,8 @@ class Logger:
             self.__check_logs_files()
 
             datetime = self.__datetime_getter()
-
-            log_file_name = f"{datetime.year}-{datetime.month}-{datetime.day}.txt"
-            log_file_path = f"{self.logs_path}/{log_file_name}"
+            # micropython doesn't seem to support sorting files by its creation date, use timestamp in name instead
+            log_file_path = f"{self.logs_path}/{self.__get_current_log_file()}"
 
             with open(log_file_path, "a+") as file:
                 file.write(f"{datetime.hour:02d}:{datetime.minutes:02d}:{datetime.seconds:02d} - {level} - {message}")
@@ -52,10 +52,24 @@ class Logger:
                                      debug_enabled=self.debug_enabled)
 
     def __check_logs_files(self):
-        log_files = sorted(os.listdir(self.logs_path))
+        log_files = os.listdir(self.logs_path)
+        files_count_diff = len(log_files) - self.max_log_files
 
-        if len(log_files) > self.max_log_files:
-            os.remove(f"{self.logs_path}/{log_files[0]}")
+        if files_count_diff > 0:
+            sorted_log_files = files_utils.get_files_sorted_by_timestamp(files=log_files)
+
+            for ind in range(files_count_diff):
+                os.remove(f"{self.logs_path}/{sorted_log_files[ind]}")
+
+    def __get_current_log_file(self):
+        datetime = self.__datetime_getter()
+        log_file_name = f"{datetime.year}-{datetime.month}-{datetime.day}.txt"
+
+        for file in os.listdir(self.logs_path):
+            if file.endswith(log_file_name):
+                return file
+
+        return f"{time.time()}_{log_file_name}"
 
     def exception(self, message: str, exception: Exception = None):
         self.__log(message=message, exception=exception, level=LoggerLevel.EXCEPTION)
