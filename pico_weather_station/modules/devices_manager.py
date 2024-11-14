@@ -55,14 +55,14 @@ class DevicesManager:
     def get_datetime(self) -> DateTime | None:
         return self.__get_readings("rtc", lambda: self.__rtc.get_datetime())
 
-    def set_datetime(self, datetime: DateTime | str) -> bool:
+    def set_datetime(self, datetime: DateTime | str) -> DateTime | None:
         try:
             dt = DateTime.from_iso(datetime) if type(datetime) == str else datetime
             self.__rtc.set_datetime(dt)
-            return True
+            return self.__rtc.get_datetime()
 
         except:
-            return False
+            return None
 
     def get_battery_voltage(self):
         return self.__battery_voltmeter.measure_with_sampling()
