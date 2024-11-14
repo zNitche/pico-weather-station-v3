@@ -36,8 +36,10 @@ def setup_tasks(app: App):
     from pico_weather_station import tasks
 
     app.add_background_task(tasks.SyncInternalRTC(config=app.config))
-    app.add_background_task(tasks.ToggleWlan(config=app.config,
-                                             server_handlers_manager=app.server_handlers_manager))
+
+    if app.config.get("WLAN_POWER_SAVING"):
+        app.add_background_task(tasks.ToggleWlan(config=app.config,
+                                                 server_handlers_manager=app.server_handlers_manager))
 
     app.add_background_task(tasks.LogWeather(config=app.config))
     app.add_background_task(tasks.LogVitals(config=app.config))
