@@ -1,5 +1,6 @@
 from lightberry import typing
 from pico_weather_station import consts
+from pico_weather_station.utils import meta_utils
 from pico_weather_station.modules import InternalTempSensor, CacheDB, DevicesManager, Logger, IntegrationsManager
 
 if typing.TYPE_CHECKING:
@@ -73,5 +74,7 @@ def setup_app(app: App):
 
     setup_tasks(app)
     create_routers(app)
+
+    meta_utils.write_startup_data(devices_manager.get_datetime())
 
     logger.info(message="app setup completed...")
