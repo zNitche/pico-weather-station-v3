@@ -29,6 +29,7 @@ async def stats(request):
         "datetime": {
             "internal": machine_utils.get_iso_time(),
             "external": datetime.to_iso_string() if datetime else None,
+            "is_accurate": devices_manager.is_rtc_accurate(),
         },
         "battery_voltage": devices_manager.get_battery_voltage(),
         "internal_temperature": devices_manager.get_internal_temp(),

@@ -64,6 +64,13 @@ class DevicesManager:
         except:
             return None
 
+    def is_rtc_accurate(self) -> bool:
+        try:
+            return not self.__rtc.is_osf_set()
+
+        except:
+            return False
+
     def get_battery_voltage(self):
         return self.__battery_voltmeter.measure_with_sampling()
 
