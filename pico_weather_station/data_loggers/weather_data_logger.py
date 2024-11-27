@@ -13,7 +13,7 @@ class WeatherDataLogger(DataLoggerBase):
         temp, pressure, humidity = devices_manager.get_env_readings()
         datetime = devices_manager.get_datetime().to_iso_string()
 
-        return [datetime, temp, humidity, pressure]
+        return [datetime, round(temp, 2), round(humidity, 2), round(pressure, 2)]
 
     def __after_logged(self):
         logger.info(message="weather data has been logged successfully")

@@ -15,13 +15,15 @@ class PVDataLogger(DataLoggerBase):
         data: list[ResponseItem] = self._data_for_log
 
         datetime = devices_manager.get_datetime().to_iso_string()
-        battery_capacity = data[0].value
-        battery_voltage = data[1].value
-        battery_current = data[2].value
-        load_voltage = data[5].value
-        load_current = data[6].value
-        solar_voltage = data[9].value
-        solar_current = data[10].value
+        rounded_data = [round(v.value, 2) if isinstance(v.value, float) else v.value for v in data]
+
+        battery_capacity = rounded_data[0]
+        battery_voltage = rounded_data[1]
+        battery_current = rounded_data[2]
+        load_voltage = rounded_data[5]
+        load_current = rounded_data[6]
+        solar_voltage = rounded_data[9]
+        solar_current = rounded_data[10]
 
         return [datetime, battery_capacity, battery_voltage, battery_current, load_voltage,
                 load_current, solar_voltage, solar_current]

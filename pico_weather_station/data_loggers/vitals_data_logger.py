@@ -10,8 +10,8 @@ class VitalsDataLogger(DataLoggerBase):
         return ["datetime", "internal_temperature", "battery_voltage"]
 
     def __get_log_row(self):
-        bat_volt = devices_manager.get_battery_voltage()
-        internal_temp = devices_manager.get_internal_temp()
+        bat_volt = round(devices_manager.get_battery_voltage(), 2)
+        internal_temp = round(devices_manager.get_internal_temp(), 2)
         datetime = devices_manager.get_datetime().to_iso_string()
 
         return [datetime, internal_temp, bat_volt]
