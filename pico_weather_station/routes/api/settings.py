@@ -10,7 +10,7 @@ if typing.TYPE_CHECKING:
 settings = Router("settings", url_prefix="/api/settings")
 
 
-@settings.route("/set_date", methods=["POST"])
+@settings.route("/set-date", methods=["POST"])
 async def set_date(request: Request):
     new_datetime = None
     target_datetime: str | None = request.body.get("datetime") if request.body else None
