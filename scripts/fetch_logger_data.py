@@ -5,7 +5,7 @@ import requests
 
 def fetch(url: str,
           data_key: str | None = None,
-          raw: bool = False) -> dict[str, ...] | None | str:
+          raw: bool = False) -> dict[str, ...] | list[any] | None | str:
     response = requests.get(url, timeout=7)
 
     if not raw:
@@ -21,10 +21,16 @@ def check_dir(path: str):
         os.makedirs(path)
 
 
+def filter_date_items(input: list[str], value: str | None) -> list[str]:
+    return [value] if value in input else []
+
+
 def main(args: argparse.Namespace):
     ip_address: str = args.address
     logger_name: str = args.logger
     output_dir: str = args.out
+    target_year: str | None = args.year
+    target_month: str | None = args.month
 
     base_url = f"{ip_address}/api/data-logs"
 
@@ -39,11 +45,19 @@ def main(args: argparse.Namespace):
 
         print(f"logged years: {years}")
 
+        if target_year is not None:
+            print(f"filtering year: {target_year}")
+            years = filter_date_items(years, target_year)
+
         for year in years:
             print(f"processing {year}")
             months = fetch(url=f"{base_url}/date/{logger_name}/{year}", data_key="months")
 
             print(f"got following months: {months}")
+
+            if target_month is not None:
+                print(f"filtering month: {target_month}")
+                months = filter_date_items(months, target_month)
 
             for month in months:
                 print(f"processing {month}/{year}...")
@@ -88,6 +102,20 @@ def get_args():
         type=str,
         required=True,
         help="logger name",
+    )
+
+    parser.add_argument(
+        "--year",
+        type=str,
+        default=None,
+        help="year to fetch logs for, for example 2025",
+    )
+
+    parser.add_argument(
+        "--month",
+        type=str,
+        default=None,
+        help="month to fetch logs for, for example 2025",
     )
 
     return parser.parse_args()
