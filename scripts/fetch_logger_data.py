@@ -74,7 +74,7 @@ def main(args: argparse.Namespace):
 
                     print("saving data...")
 
-                    with open(os.path.join(out_dir, f"{day}.txt"), "w") as file:
+                    with open(os.path.join(out_dir, f"{day}.csv"), "w") as file:
                         file.write(data)
 
                     print(f"done...")
